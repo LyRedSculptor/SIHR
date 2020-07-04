@@ -3,6 +3,7 @@ import random
 import os
 import pygame
 
+# WINDOWS POSITION
 x = 100
 y = 45
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x, y)
@@ -29,6 +30,7 @@ asteroid2Img = pygame.image.load('asteroid2.png')
 asteroid3Img = pygame.image.load('asteroid3.png')
 background = pygame.image.load('space.png')
 bulletImg = pygame.image.load('bullet.png')
+roundBulletImg = pygame.image.load('roundBullet0.png')
 
 
 # Enemy class
@@ -36,46 +38,47 @@ class Enemy:
     def __init__(self, type, pos):
         if type == 1:
             self.img = enemy1Img
-        else:
+        elif type == 2:
             self.img = enemy2Img
-        self.original_pos = pos
-        self.pos_x = pos
-        self.point = 0
-        self.speed = 0
-        self.goBack = False
+        self.original_pos = pos  # main position
+        self.pos_x = pos  # current position
         self.pos_y = 1000
+        self.point = 0  # moving parameter. Where the enemy have to go (x)
+        self.speed = 0  # moving parameter. Will change from time to time
+        self.goBack = False  # moving parameter. True if enemy reached the point and have to go back
 
     def starting(self, speedY):
         self.pos_y -= speedY
 
     # needs completely rewriting. ...maybe?
+    # Спершу генерується точка, до якої має рухатись ворог, та його швидкість.
     def move(self):
         if self.point == 0:
             self.point = random.randint(-60, 60)
             print(self.point)
             self.speed = random.uniform(0.03, 0.1)
-        if not self.goBack:
+        if not self.goBack:  # ворог рухається до точки
             if self.point < 0:
                 self.pos_x -= self.speed
             else:
                 self.pos_x += self.speed
-            if self.point < 0:
+            if self.point < 0:  # перевірка, чи ворог дійшов до точки. Якщо так, goBack = True
                 if (self.pos_x - self.original_pos) < self.point:
                     self.goBack = True
             else:
                 if (self.pos_x - self.original_pos) > self.point:
                     self.goBack = True
-        else:
+        else:  # ворог повертається
             if self.point < 0:
                 self.pos_x += self.speed
-                if self.pos_x > self.original_pos:
+                if self.pos_x > self.original_pos:  # перевірка, чи ворог повернувся на початкову позицію
                     self.pos_x = self.original_pos
                     self.point = 0
                     self.speed = 0
                     self.goBack = False
             else:
                 self.pos_x -= self.speed
-                if self.pos_x < self.original_pos:
+                if self.pos_x < self.original_pos:  # така ж перевірка
                     self.pos_x = self.original_pos
                     self.point = 0
                     self.speed = 0
@@ -84,27 +87,25 @@ class Enemy:
     def visualise(self):
         screen.blit(self.img, (self.pos_x, self.pos_y))
 
-    def shooting(self):
-        bullets.append(Bullet(self))
+    def shooting(self, speed=0.001, type=1):
+        bullets.append(Bullet(self, speed, type))  # у список з пулями додається нова
 
+
+# Bullet class
 class Bullet:
-    def __init__(self, enemy, speed = 0.002, type = 1):
+    def __init__(self, enemy, speed, type):
         self.angle = 0
-        self.speed_x = (player_x - enemy.pos_x) / (1/speed)
-        self.speed_y = (player_y - enemy.pos_y) / (1/speed)
+        self.speed_x = (player_x - enemy.pos_x) / (1 / speed)  # !!! Need rewriting!!! Bullets are slower !!!
+        self.speed_y = (player_y - enemy.pos_y) / (1 / speed)  # !!! when player are closer!              !!!
         self.type = type
-        self.time = 1000
+        self.time = 3000
         self.pos_x = enemy.pos_x
         self.pos_y = enemy.pos_y
 
     def visualise(self):
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
-        screen.blit(bulletImg, (self.pos_x, self.pos_y))
-
-
-
-
+        screen.blit(roundBulletImg, (self.pos_x, self.pos_y))
 
 
 # Player
@@ -165,9 +166,6 @@ while starting:
     player(player_x, player_y)
 
     pygame.display.update()
-
-
-
 
 # GAME RUNNING
 while running:
@@ -240,17 +238,17 @@ while running:
     enemy3.visualise()
     enemy4.visualise()
 
-    chance1 = random.randint(0, 500)
-    chance2 = random.randint(0, 500)
-    chance3 = random.randint(0, 500)
-    chance4 = random.randint(0, 500)
-    if chance1 > 498:
+    chance1 = random.randint(0, 5000)
+    chance2 = random.randint(0, 5000)
+    chance3 = random.randint(0, 5000)
+    chance4 = random.randint(0, 5000)
+    if chance1 > 4995:
         enemy1.shooting()
-    if chance2 > 498:
+    if chance2 > 4995:
         enemy2.shooting()
-    if chance3 > 498:
+    if chance3 > 4995:
         enemy3.shooting()
-    if chance4 > 498:
+    if chance4 > 4995:
         enemy4.shooting()
 
     for each in bullets:
