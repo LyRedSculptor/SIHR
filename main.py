@@ -130,10 +130,8 @@ lockG = False
 running = True
 starting = True
 bullets = []
-enemy1 = Enemy(1, 134)
-enemy2 = Enemy(2, 384)
-enemy3 = Enemy(2, 584)
-enemy4 = Enemy(1, 834)
+enemy = [Enemy(1, 134), Enemy(2, 384), Enemy(2, 584), Enemy(1, 834)]
+
 startingPlayerY = 740
 s = pygame.Surface((1000, 800))  # the size of your rect
 s.set_alpha(128)  # alpha level
@@ -144,25 +142,20 @@ while starting:
     screen.fill((r, g, b))
     # screen.blit(s, (0, 0))  # (0,0) are the top-left coordinates
 
-    if enemy1.pos_y > 630:
-        enemy1.starting(0.2)
-        enemy2.starting(0.2)
-        enemy3.starting(0.2)
-        enemy4.starting(0.2)
+    if enemy[0].pos_y > 630:
+        for each in enemy:
+            each.starting(0.2)
     else:
         starting = False
 
     if player_y > 300:
         player_y -= 0.3
 
-    enemy1.move()
-    enemy2.move()
-    enemy3.move()
-    enemy4.move()
-    enemy1.visualise()
-    enemy2.visualise()
-    enemy3.visualise()
-    enemy4.visualise()
+    for each in enemy:
+        each.move()
+
+    for each in enemy:
+        each.visualise()
     player(player_x, player_y)
 
     pygame.display.update()
@@ -228,28 +221,15 @@ while running:
     if player_y >= 450:
         player_y = 450
 
-    enemy1.move()
-    enemy2.move()
-    enemy3.move()
-    enemy4.move()
+    for each in enemy:
+        each.move()
 
-    enemy1.visualise()
-    enemy2.visualise()
-    enemy3.visualise()
-    enemy4.visualise()
+    for each in enemy:
+        each.visualise()
 
-    chance1 = random.randint(0, 5000)
-    chance2 = random.randint(0, 5000)
-    chance3 = random.randint(0, 5000)
-    chance4 = random.randint(0, 5000)
-    if chance1 > 4995:
-        enemy1.shooting()
-    if chance2 > 4995:
-        enemy2.shooting()
-    if chance3 > 4995:
-        enemy3.shooting()
-    if chance4 > 4995:
-        enemy4.shooting()
+    for each in enemy:
+        if random.uniform(0, 1) < 0.005:
+            each.shooting()
 
     for each in bullets:
         each.visualise()
