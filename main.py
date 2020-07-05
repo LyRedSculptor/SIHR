@@ -85,7 +85,7 @@ class Enemy:
                     self.goBack = False
 
     def visualise(self):
-        screen.blit(self.img, (self.pos_x, self.pos_y))
+        screen.blit(self.img, (round(self.pos_x), round(self.pos_y)))
 
     def shooting(self, speed=0.001, type=1):
         bullets.append(Bullet(self, speed, type))  # у список з пулями додається нова
@@ -105,7 +105,7 @@ class Bullet:
     def visualise(self):
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
-        screen.blit(roundBulletImg, (self.pos_x, self.pos_y))
+        screen.blit(roundBulletImg, (round(self.pos_x), round(self.pos_y)))
 
 
 # Player
@@ -118,7 +118,7 @@ player_down = 0
 
 
 def player(x, y):
-    screen.blit(playerImg, (x, y))
+    screen.blit(playerImg, (round(x), round(y)))
 
 
 # GAME PREPARING
@@ -228,7 +228,7 @@ while running:
         each.visualise()
 
     for each in enemy:
-        if random.uniform(0, 1) < 0.005:
+        if random.random() < 0.005:
             each.shooting()
 
     for each in bullets:
